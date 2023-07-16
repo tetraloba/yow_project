@@ -12,6 +12,7 @@ class Calendar(Clifig):
         blue = '\033[36m'
         yellow_b = '\033[43m'
         black_b = '\033[40m'
+        reset = '\033[0m'
 
         # print(green + today.strftime("%B"), today.year) # 年月を出力
         super().append(green + today.strftime("%B") + ' ' + str(today.year))
@@ -22,7 +23,7 @@ class Calendar(Clifig):
         offset = (first_wday + 1) % 7
         for i in range(6):
             # print('|', end='')
-            line = '|'
+            line = reset + green + '|'
             for j in range(7):
                 date = j + 1 - offset + i * 7 # [i][j]マスの日付
 
@@ -38,8 +39,6 @@ class Calendar(Clifig):
                     line += yellow_b
 
                 date_str = str(date).ljust(4) if 1 <= date and date <= date_max else '    '
-                if date == today.day:
-                    date_str = str(date).ljust(2) + '🐈'
                 # print(date_str, end='') # 日付を出力
                 line += date_str
 
@@ -56,8 +55,46 @@ class Calendar(Clifig):
             # print()
             super().append(line)
 
+            line = '|'
+            for j in range(7):
+                date = j + 1 - offset + i * 7 # [i][j]マスの日付
+
+                line += u_line
+
+                if j == 0: # 土,日曜日は色を変える
+                    # print(red, end='')
+                    line += red
+                elif j == 6:
+                    # print(blue, end='')
+                    line += blue
+
+                if date == today.day: # 今日は背景色を変える
+                    # print(yellow_b, end='')
+                    line += yellow_b
+
+                if date == today.day: # 今日は猫さんを表示する
+                    date_str = '  🐈'
+                else:
+                    date_str = '    '
+                line += date_str
+
+                if date == today.day: # 今日の背景色を元に戻す
+                    # print(black_b, end='')
+                    line += black_b
+
+                if j == 0 or j == 6: # 土,日曜日の色を元に戻す
+                    # print(green, end='')
+                    line += green
+
+                # print('|', end='')
+                line += '|'
+            # print()
+            super().append(line)
+
+
+
         # print('\033[m') # 修飾を解除
         super().append('\033[m')
-        for line in self.lines:
-            print(line)
-        # super().print()
+        # for line in self.lines:
+        #     print(line)
+        super().print()
