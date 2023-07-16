@@ -17,13 +17,15 @@ def clear():
 clear()
 
 strings = get_commits_per_date()
+print('Contributions on /home/tetraloba/KagawaU') # todo ハリボテ修正
 create_heatpmap(strings)
 print()
 
+print('Languages on /home/tetraloba/projects/competitiveProgramming') # todo ハリボテ修正
 print_linguist()
 
 print('\n\n\n\n\n')
 create_abstinence()
 
-calendar = Calendar(row=12, column=60)
+calendar = Calendar(row=14, column=60)
 calendar.draw_calendar(dt.now()) # 現在日時を渡す

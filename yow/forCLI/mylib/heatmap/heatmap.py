@@ -39,7 +39,7 @@ def create_heatpmap(strings: list):
     first_sunday = this_saturday - dt.timedelta(6 + 7 * (WEEK_NUM - 1))
     # print(first_sunday) # debug
     date = first_sunday
-    print('       Aug     Sep     Oct       Nov     Dec       Jan     Feb     Mar     Apr       May     Jub     Jul   ')
+    print('       Aug     Sep     Oct       Nov     Dec       Jan     Feb     Mar     Apr       May     Jub     Jul   ') # todo ハリボテいつか直す
     for i in range(7):
         print(f'\033[48;2;{10};{14};{18}m', end='') # 背景色を設定
         print(f'\033[37m{wdays[i]}\033[30m', end='')
