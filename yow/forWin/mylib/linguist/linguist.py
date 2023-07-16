@@ -23,11 +23,11 @@ def create_linguist(repository_path: str, file_path: str = None):
     sizes_list = sorted(sizes_dict.items(), key=lambda x:x[1], reverse=True) # 降順ソートしてリスト化
 
     # SVGファイルの生成
-    width = 1000
+    width = 1100
     char_size = 20
     bar_height = char_size
     background_color = RGB(0, 0, 0)
-    svg = SVG(file_path, 0, 0, width, bar_height + char_size * sizes_list.__len__(), unit='px')
+    svg = SVG(file_path, 0, -char_size, width, bar_height + char_size * (sizes_list.__len__() + 1), unit='px')
     svg.rect(0, 0, '100%', '100%', background_color, stroke_width=0)
     # グラフを表示
     pen_x = 0
@@ -41,5 +41,7 @@ def create_linguist(repository_path: str, file_path: str = None):
             r, g, b = settings['langs'][lang][0] # todo 例外処理すべき
             svg.circle(char_size / 2, bar_height + char_size * i + char_size / 1.5, char_size / 3, RGB(r, g, b), stroke_width=0)
             svg.text(char_size, bar_height + char_size * i + char_size, f"{lang} {round(size * 100, '0.1')}%", font_size=char_size, fill_color=RGB(255, 255, 255), stroke_width=0)
+    # リポジトリ名を表示
+    svg.text(0, -char_size * 0.5, 'Languages on ' + settings['paths'][0], font_size=18, fill_color=RGB(150, 150, 150), stroke_width=0)
 
     chdir(path_origin) # カレントディレクトリを復元

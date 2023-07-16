@@ -1,6 +1,7 @@
 import datetime as dt
 
 from ..svg4py.svg import SVG, RGB
+from .config import settings # パス出力用
 
 FILE_NAME = 'heatmap.svg'
 WEEK_NUM = 53
@@ -21,8 +22,8 @@ def create_heatpmap(daily_commits: dict, file_path: str = None):
     # print(today) # debug
 
     # svgの生成と背景や文字の太さの設定
-    svg = SVG(file_path, -40, -20, 1100, 160, unit='px')
-    svg.rect(-40, -20, 1100, 160, RGB(10, 14, 18), stroke_width=0)
+    svg = SVG(file_path, -40, -40, 1100, 180, unit='px')
+    svg.rect(-40, -40, 1100, 180, RGB(10, 14, 18), stroke_width=0)
     svg.set_width(1)
 
     # debug daili_commits: dict の内容を表示
@@ -54,3 +55,6 @@ def create_heatpmap(daily_commits: dict, file_path: str = None):
     # 月の出力
     for i, x in enumerate(first_x_list):
         svg.text(x, -2, dt.date(2000, i + 1, 1).strftime('%b'), font_size=size_text, fill_color=rgb_text, stroke_width=0)
+
+    # リポジトリ名の出力
+    svg.text(-40, -20, 'Contributions on ' + settings['paths'][0], font_size=size_text, fill_color=rgb_text, stroke_width=0)
