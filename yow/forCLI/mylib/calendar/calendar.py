@@ -17,7 +17,7 @@ class Calendar(Clifig):
         # print(green + today.strftime("%B"), today.year) # 年月を出力
         super().append(green + today.strftime("%B") + ' ' + str(today.year))
         # print(u_line + red + " Sun" + green + " Mon Tue Wed Thu Fri" + blue + " Sat " + green) # 曜日を出力
-        super().append(u_line + red + "  Sun" + green + "  Mon  Tue  Wed  Thu  Fri" + blue + "  Sat " + green)
+        super().append(u_line + red + "  Sun " + green + "  Mon   Tue   Wed   Thu   Fri " + blue + "  Sat  " + green)
         # 日付部分を出力
         first_wday, date_max = calendar.monthrange(today.year, today.month)
         offset = (first_wday + 1) % 7
@@ -38,7 +38,7 @@ class Calendar(Clifig):
                     # print(yellow_b, end='')
                     line += yellow_b
 
-                date_str = str(date).ljust(4) if 1 <= date and date <= date_max else '    '
+                date_str = str(date).ljust(5) if 1 <= date and date <= date_max else '     '
                 # print(date_str, end='') # 日付を出力
                 line += date_str
 
@@ -72,10 +72,7 @@ class Calendar(Clifig):
                     # print(yellow_b, end='')
                     line += yellow_b
 
-                if date == today.day: # 今日は猫さんを表示する
-                    date_str = '  🐈'
-                else:
-                    date_str = '    '
+                date_str = '  🐈 ' if date == today.day else '     ' # 今日は猫さんを表示する
                 line += date_str
 
                 if date == today.day: # 今日の背景色を元に戻す
