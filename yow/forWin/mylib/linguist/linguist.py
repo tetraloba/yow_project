@@ -33,15 +33,15 @@ def create_linguist(repository_path: str, file_path: str = None):
     pen_x = 0
     for lang, size in sizes_list:
         r, g, b = settings['langs'][lang][0] # todo 例外処理すべき
-        svg.line(pen_x, char_size / 2, pen_x + size * width, char_size / 2, RGB(r, g, b), width=char_size)
+        svg.line(pen_x, char_size / 2, pen_x + size * width, char_size / 2, RGB(r, g, b), stroke_width=char_size)
         pen_x += size * width
     # 言語とその割合を表示
     for i, (lang, size) in enumerate(sizes_list):
         if size != 0:
             r, g, b = settings['langs'][lang][0] # todo 例外処理すべき
             svg.circle(char_size / 2, bar_height + char_size * i + char_size / 1.5, char_size / 3, RGB(r, g, b), stroke_width=0)
-            svg.text(char_size, bar_height + char_size * i + char_size, f"{lang} {round(size * 100, '0.1')}%", font_size=char_size, fill_color=RGB(255, 255, 255), stroke_width=0)
+            svg.text(char_size, bar_height + char_size * i + char_size, f"{lang} {round(size * 100, '0.1')}%", font_size=char_size, fill=RGB(255, 255, 255), stroke_width=0)
     # リポジトリ名を表示
-    svg.text(0, -char_size * 0.5, 'Languages on ' + settings['paths'][0], font_size=18, fill_color=RGB(150, 150, 150), stroke_width=0)
+    svg.text(0, -char_size * 0.5, 'Languages on ' + settings['paths'][0], font_size=18, fill=RGB(150, 150, 150), stroke_width=0)
 
     chdir(path_origin) # カレントディレクトリを復元

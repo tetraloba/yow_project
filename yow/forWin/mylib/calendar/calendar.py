@@ -39,13 +39,13 @@ class Calendar:
     def __print_year_month(self, font_size, svg: SVG, color: RGB = None):
         if color is None:
             color = RGB(255, 255, 255)
-        svg.text(self.x_list[0], self.y_list[0] - font_size * 2, self.today.strftime('%B') + '  ' + self.today.year.__str__(), font_size=font_size, fill_color=color, stroke_width=0)
+        svg.text(self.x_list[0], self.y_list[0] - font_size * 2, self.today.strftime('%B') + '  ' + self.today.year.__str__(), font_size=font_size, fill=color, stroke_width=0)
         return None
 
     def __print_wdays(self, font_size, svg: SVG, color: RGB = None):
         padding = 20
         for i in range(self.wdays.__len__()):
-            svg.text((self.x_list[i] + self.x_list[i + 1]) / 2 - font_size * 2 / 3, self.y_list[0] - padding, self.wdays[i], font_size=font_size, fill_color=color, stroke_width=0)
+            svg.text((self.x_list[i] + self.x_list[i + 1]) / 2 - font_size * 2 / 3, self.y_list[0] - padding, self.wdays[i], font_size=font_size, fill=color, stroke_width=0)
         return None
 
     def __print_dates(self, font_size, svg: SVG, color: RGB = None):

@@ -48,13 +48,13 @@ def create_heatpmap(daily_commits: dict, file_path: str = None):
     # 曜日の出力
     rgb_text = RGB(180, 180, 180)
     size_text = 18
-    svg.text(-35, 40, 'Mon', font_size=size_text, fill_color=rgb_text, stroke_width=0)
-    svg.text(-35, 80, 'Wed', font_size=size_text, fill_color=rgb_text, stroke_width=0)
-    svg.text(-35, 120, 'Fri', font_size=size_text, fill_color=rgb_text, stroke_width=0)
+    svg.text(-35, 40, 'Mon', font_size=size_text, fill=rgb_text, stroke_width=0)
+    svg.text(-35, 80, 'Wed', font_size=size_text, fill=rgb_text, stroke_width=0)
+    svg.text(-35, 120, 'Fri', font_size=size_text, fill=rgb_text, stroke_width=0)
 
     # 月の出力
     for i, x in enumerate(first_x_list):
-        svg.text(x, -2, dt.date(2000, i + 1, 1).strftime('%b'), font_size=size_text, fill_color=rgb_text, stroke_width=0)
+        svg.text(x, -2, dt.date(2000, i + 1, 1).strftime('%b'), font_size=size_text, fill=rgb_text, stroke_width=0)
 
     # リポジトリ名の出力
-    svg.text(-40, -20, 'Contributions on ' + settings['paths'][0], font_size=size_text, fill_color=rgb_text, stroke_width=0)
+    svg.text(-40, -20, 'Contributions on ' + settings['paths'][0], font_size=size_text, fill=rgb_text, stroke_width=0)

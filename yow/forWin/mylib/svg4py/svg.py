@@ -24,6 +24,8 @@ class SVG:
         self.stroke_color:RGB = RGB(255, 255, 255) # 'white'
         self.fill_color:RGB = RGB(255, 255, 255) # 'white'
         self.font_family = 'monospace'
+        self.sequence_counter = 0 # _add_sequencial_drawing_animation 用
+
         self._start(viewBox_min_x, viewBox_min_y, viewBox_width, viewBox_height, width, height)
 
     def __del__(self):
@@ -63,52 +65,94 @@ class SVG:
     def set_stroke_color(self, color: RGB):
         self.stroke_color = color
 
-    def line(self, x1: float, y1: float, x2: float, y2: float, color: RGB = None, width = None):
-        if color is None:
-            color = self.stroke_color
-        if width is None:
-            width = self.stroke_width
-        self.fp.write(f"<line x1=\"{x1}\" y1=\"{y1}\" "
-                      f"x2=\"{x2}\" y2=\"{y2}\" "
-                      f"stroke=\"{color}\" stroke-width=\"{width}\" "
-                      f"stroke-opacity=\"{1}\" stroke-linecap=\"{'batt'}\" />\n")
+    def _make_attributes(self, dictionary: dict): # 引数の辞書からSVGの属性辞書を生成して返す
 
-    def rect(self, x: float = 0, y: float = 0, width = 'auto', height = 'auto', fill_color = None, stroke_color = None, stroke_width: float = None):
-        if fill_color is None:
-            fill_color = self.fill_color
-        if stroke_color is None:
-            stroke_color = self.stroke_color
-        self.fp.write(f"<rect x=\"{x}\" y=\"{y}\" "
-                      f"width=\"{width}\" height=\"{height}\" "
-                      f"fill=\"{fill_color}\" stroke=\"{stroke_color}\" "
-                      f"stroke-width=\"{stroke_width}\" />\n")
+        del dictionary['self'] # self は 要らない
 
-    def circle(self, cx: float = 0, cy: float = 0, r: float = 0, fill_color: RGB = None, stroke_color: RGB = None, stroke_width: float = None):
-        if fill_color is None:
-            fill_color = self.fill_color
-        if stroke_color is None:
-            stroke_color = self.stroke_color
+        # _ を - に置き換える
+        keys_with_hyphen = [key for key in dictionary if '_' in key]
+        for key_with_hyphen in keys_with_hyphen:
+            dictionary[key_with_hyphen.replace('_', '-')] = dictionary[key_with_hyphen]
+            del dictionary[key_with_hyphen]
+
+        return dictionary
+
+    # line(), rect(), circle()を一般化したもの。
+    def _add(self, element: str, attributes: dict, time: float = 0.1):
+        # 描画アニメーションのために不透明度を強制的に0にする。
+        if 'stroke-opacity' in attributes:
+            attributes['stroke-opacity'] = 0
+        if 'fill-opacity' in attributes:
+            attributes['fill-opacity'] = 0
+
+        self.fp.write(f'<{element} ')
+        for attribute, value in attributes.items():
+            self.fp.write(f'{attribute}="{value}" ')
+        self.fp.write('>\n')
+
+        self._add_sequencial_drawing_animation([attribute for attribute in attributes if attribute in ['stroke-opacity', 'fill-opacity']], time)
+
+        self.fp.write(f'</{element}>\n')
+    
+    def _add_sequencial_drawing_animation(self, attributes: list, time: float):
+        for attribute in attributes:
+            self.fp.write('<animate attributeType="XML"\n'
+                        f'attributeName="{attribute}"\n'
+                        'to="1"\n'
+                        f'begin="{self.sequence_counter}"\n'
+                        f'dur="{time}s"\n'
+                        'fill="freeze" />\n')
+            self.sequence_counter += time
+
+    def line(self, x1: float, y1: float, x2: float, y2: float, stroke: RGB = None, stroke_width = None, stroke_opacity = None, stroke_linecap='batt'):
+        if stroke is None:
+            stroke = self.stroke_color
         if stroke_width is None:
             stroke_width = self.stroke_width
-        self.fp.write(f"<circle cx=\"{cx}\" cy=\"{cy}\" r=\"{r}\" "
-                      f"fill=\"{fill_color}\" stroke=\"{stroke_color}\" stroke-width=\"{stroke_width}\" "
-                      f"fill-opacity=\"{1.0}\" stroke-opacity=\"{1.0}\" />\n")
+        if stroke_opacity is None:
+            stroke_opacity = 1
+        self._add('line', self._make_attributes(locals()))
 
-    def text(self, x: float = 0, y: float = 0, text: str = '', font_family: str = None, font_size: float = None, fill_color: RGB = None, stroke_color: RGB = None, stroke_width: float = None,):
+    def rect(self, x: float = 0, y: float = 0, width = 'auto', height = 'auto', fill = None, stroke = None, stroke_width: float = None, fill_opacity: float = 1.0, stroke_opacity: float = 1.0):
+        if fill is None:
+            fill = self.fill_color
+        if stroke is None:
+            stroke = self.stroke_color
+        self._add('rect', self._make_attributes(locals()), 0.01)
+
+    def circle(self, cx: float = 0, cy: float = 0, r: float = 0, fill: RGB = None, stroke: RGB = None, stroke_width: float = None, fill_opacity: float = 1.0, stroke_opacity: float = 1.0):
+        if fill is None:
+            fill = self.fill_color
+        if stroke is None:
+            stroke = self.stroke_color
+        if stroke_width is None:
+            stroke_width = self.stroke_width
+        self._add('circle', self._make_attributes(locals()))
+
+    def text(self, x: float = 0, y: float = 0, text: str = '', font_family: str = None, font_size: float = None, fill: RGB = None, stroke: RGB = None, stroke_width: float = None, fill_opacity:float = 1.0, stroke_opacity: float = 1.0):
         if font_family is None:
             font_family = self.font_family
         if font_size is None:
             font_size = self.font_size
-        if fill_color is None:
-            fill_color = self.fill_color
-        if stroke_color is None:
-            stroke_color = self.stroke_color
+        if fill is None:
+            fill = self.fill_color
+        if stroke is None:
+            stroke = self.stroke_color
         if stroke_width is None:
             stroke_width = self.stroke_width
-        self.fp.write(f"<text x=\"{x}\" y=\"{y}\" "
-                      f"font-family=\"{font_family}\" font-size=\"{font_size}\" "
-                      f"fill=\"{fill_color}\" stroke=\"{stroke_color}\" "
-                      f"stroke-width=\"{stroke_width}\" >" + text + "</text>\n")
+        attributes = self._make_attributes(locals())
+        del attributes['text']
+
+        self.fp.write(f'<text x="{x}" y="{y}" '
+                      f'font-family="{font_family}" font-size="{font_size}" '
+                      f'fill="{fill}" stroke="{stroke}" '
+                      f'stroke-width="{stroke_width}" fill-opacity="{0}" '
+                      f'stroke-opacity="{0}" >\n' + text + '\n')
+
+        self._add_sequencial_drawing_animation([attribute for attribute in attributes if attribute in ['stroke-opacity', 'fill-opacity']], 0.03)
+        self.sequence_counter += 0.1
+
+        self.fp.write('</text>\n')
 
     def image(self, path: str, width, height, x, y):
         self.fp.write(f'<image xlink:href="{path}" width="{width}" height="{height}" x="{x}" y="{y}" />\n')
