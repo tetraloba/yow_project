@@ -1,4 +1,5 @@
 from os import system, name # import only system from os
+from ..delayed_print.delayed_print import delayed_print as dprint
 
 def _clear():
     if name == 'nt': # for windows
@@ -19,7 +20,7 @@ class Clifig:
         self.lt[0] = self.lt[0] if row == 0 else row
         self.lt[1] = self.lt[1] if column == 0 else column
         for line in self.lines:
-            print(f"\033[{self.lt[0]};{self.lt[1]}H" + line)
+            dprint(f"\033[{self.lt[0]};{self.lt[1]}H" + line)
             self.lt[0] += 1
         print("\033[0m")
     def len(self):
