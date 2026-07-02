@@ -1,5 +1,4 @@
 from decimal import Decimal, ROUND_HALF_UP
-from os import getcwd, chdir
 
 from .du import get_sizes_per_lang
 from .config import settings
@@ -11,8 +10,6 @@ def round(f: float, precision: str):
 def create_linguist(repository_path: str, file_path: str = None):
     if file_path is None:
         file_path = 'linguist.svg'
-    path_origin = getcwd() # 元のカレントディレクトリ(復元用)
-    chdir(repository_path)
 
     sizes_dict = get_sizes_per_lang(repository_path)
     size_sum = sum(size for size in sizes_dict.values()) # 容量の合計
@@ -43,5 +40,3 @@ def create_linguist(repository_path: str, file_path: str = None):
             svg.text(char_size, bar_height + char_size * i + char_size, f"{lang} {round(size * 100, '0.1')}%", font_size=char_size, fill=RGB(255, 255, 255), stroke_width=0)
     # リポジトリ名を表示
     svg.text(0, -char_size * 0.5, 'Languages on ' + settings['paths'][0], font_size=18, fill=RGB(150, 150, 150), stroke_width=0)
-
-    chdir(path_origin) # カレントディレクトリを復元
