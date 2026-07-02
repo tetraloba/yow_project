@@ -15,4 +15,11 @@ def get_commits_per_date(path):
     # for date, cnt in dates.items():
     #     print(date, cnt) # debug
 
+    # シェルスクリプトでカウントしてしまう手もある
+    # cmd_str = f"git -C '{path}' log --pretty=format:'%ai' | cut -d ' ' -f 1 | uniq -c | sed 's/^[[:space:]]*//'"
+    # res = subprocess.run(["wsl", "--", "bash", "-c", cmd_str], shell=True, capture_output=True, text=True).stdout
+    # dates = {datetime.strptime(line.split()[1], '%Y-%m-%d').date():int(line.split()[0]) for line in res.split('\n')[:-1]}
+    # ワンライナー（笑）
+    # return {datetime.strptime(line.split()[1], '%Y-%m-%d').date():int(line.split()[0]) for line in subprocess.run(["wsl", "--", "bash", "-c", f"git -C '{path}' log --pretty=format:'%ai' | cut -d ' ' -f 1 | uniq -c | sed 's/^[[:space:]]*//'"], shell=True, capture_output=True, text=True).stdout.split('\n')[:-1]}
+
     return dates
