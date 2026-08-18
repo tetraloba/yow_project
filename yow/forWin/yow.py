@@ -1,5 +1,7 @@
 from datetime import datetime
 from os import getcwd, chdir, name, path
+import sys
+import logging
 
 from yow.forWin.mylib.calendar.calendar import Calendar
 
@@ -17,7 +19,20 @@ from yow.forWin.mylib.integrate.integrate import create_integrated
 from yow.forWin.mylib import svg2png
 from yow.forWin.mylib import change_wallpaper
 
-
+# logging
+LOGFILE='./yow/forWin/yow.log'
+logging.basicConfig(
+    filename=LOGFILE,
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s %(message)s'
+)
+logger = logging.getLogger(__name__)
+# stdout and stderr redirect to LOGFILE
+stdout_org = sys.stdout
+stderr_org = sys.stderr
+f = open(LOGFILE, 'a', encoding='utf-8')
+sys.stdout = f
+sys.stderr = f
 
 chdir(path.abspath(path.join('yow', 'forWin')))
 work_dir = getcwd()
@@ -30,37 +45,44 @@ date = str(today.year)[2:] + str(today.month).zfill(2) + str(today.day).zfill(2)
 
 
 # calendar
+logger.info('draw_calendar()')
 calendar = Calendar(1920, 1080, 200, 200, 1870, 1030, 50) # regular
 calendar.draw_calendar(path.join(tmp_dir, 'calendar.svg'))
 
 
 # heatmap
+logger.info('create_heatmap()')
 for repository_path in heatmap_settings['paths']: # todo 例外処理
     daily_commits = get_commits_per_date(repository_path)
     create_heatpmap(daily_commits, path.join(tmp_dir, 'heatmap.svg'))
 
 
 # linguist
+logger.info('create_linguist()')
 repository_paths = linguist_settings.get('paths', None)
 if repository_paths is None:
-    print('Error. "confing.py / settings / path" not found')
+    logger.error('"confing.py / settings / path" not found')
     exit()
 for repository_path in repository_paths:
     create_linguist(repository_path, path.join(tmp_dir, 'linguist.svg'))
 
 
 # abstinence
+logger.info('create_abstinence()')
 create_abstinence(path.join(tmp_dir, 'abstinence.svg'))
 
 
 # integrate
+logger.info('create_integrated()')
 integrated_path = path.join(tmp_dir, 'integrated.svg')
 create_integrated(integrated_path)
 
 # SVG->PNG convert
+logger.info('convert()')
 svg2png.convert(integrated_path, wallpaper_path)
 
 # change Windows wallpaper
+logger.info('change_wallpaper()')
 if name == 'nt':
     change_wallpaper.change_wallpaper(wallpaper_path)
 
@@ -68,3 +90,7 @@ if name == 'nt':
 
 # Remove .png and .svg created more than 1 day ago
 # Get-ChildItem | Where-Object {($_.Mode -eq "-a----") -and ($_.CreationTime -lt (Get-Date).AddDays(-1))} | Remove-Item -in *.png,*.svg
+
+sys.stdout = stdout_org
+sys.stderr = stderr_org
+f.close()
